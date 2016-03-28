@@ -6,5 +6,7 @@
 #
 # All rights reserved - Do Not Redistribute
 #
-include_recipe "wordpress::php70"
-include_recipe "wordpress::nginx"
+
+package 'nginx' do
+  action :install
+end

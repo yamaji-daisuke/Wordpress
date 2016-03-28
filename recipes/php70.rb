@@ -7,10 +7,8 @@
 # All rights reserved - Do Not Redistribute
 #
 
-execute 'wordpress::php70 install epel' do
-  command 'yum -y install epel-release'
-  action :run
-  ignore_failure true
+package 'epel-release' do
+  action :install
 end
 
 remote_file '/tmp/remi-release-7.rpm' do
@@ -28,9 +26,10 @@ execute 'wordpress::php70 install remi' do
   not_if { File.exists?('/etc/yum.repos.d/remi.repo') }
 end
 
-execute 'wordpress::php70 install php70' do
-  command 'yum --enablerepo=epel,remi,remi-php70 install php70'
-  action :run
+package 'php70' do
+  action :install
+  options '--enablerepo=epel,remi,remi-php70'
+  action :install
 end
 
 execute 'wordpress::php70 setting path' do
@@ -42,9 +41,16 @@ execute 'wordpress::php70 setting path' do
   ignore_failure true
 end
 
-execute 'wordpress::php70 install php extensions' do
-  command 'yum --enablerepo=epel,remi,remi-php70 install php70-php-mcrypt php70-php-mbstring php70-php-gd php70-php-mysql php70-php-fpm'
-  action :run
+%W{
+  php70-php-mcrypt
+  php70-php-mbstring
+  php70-php-gd
+  php70-php-memcached
+  php70-php-fpm
+}.each do |pkg|
+  package "#{pkg}" do
+    action :install
+    options '--enablerepo=epel,remi,remi-php70'
+  end
 end
-
 
