@@ -54,3 +54,36 @@ end
   end
 end
 
+execute 'wordpress::php70 prepare conf files & log directory' do
+  command <<-EOH
+    ln -s /etc/opt/remi/php70/php.ini /etc/php.ini 
+    ln -s /etc/opt/remi/php70/php.d /etc/php.d 
+    ln -s /etc/opt/remi/php70/php-fpm.conf /etc/php-fpm.conf
+    ln -s /etc/opt/remi/php70/php-fpm.d /etc/php-fpm.d
+    mkdir /var/log/php-fpm
+  EOH
+  action :run
+  ignore_failure true
+  not_if { Dir.exists?('/var/log/php-fpm') }
+end
+
+cookbook_file "/etc/opt/remi/php70/php-fpm.conf" do
+  source "php-fpm.conf"
+  owner "root"
+  group "root"
+  mode 0644
+end
+
+cookbook_file "/etc/opt/remi/php70/php-fpm.d/www.conf" do
+  source "php-fpm.d/www.conf"
+  owner "root"
+  group "root"
+  mode 0644
+end
+
+service "php70-php-fpm" do
+  action [ :enable, :start]
+  supports :start => true, :restart => true, :enable => true
+end
+
+
