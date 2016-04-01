@@ -39,6 +39,7 @@ execute 'wordpress::php70 setting path' do
   EOH
   action :run
   ignore_failure true
+  not_if { File.exists?('/etc/profile.d/php70.sh') }
 end
 
 %W{
@@ -47,6 +48,9 @@ end
   php70-php-gd
   php70-php-memcached
   php70-php-fpm
+  php70-php-json
+  php70-php-pdo
+  php70-php-mysqlnd
 }.each do |pkg|
   package "#{pkg}" do
     action :install
