@@ -9,3 +9,4 @@
 include_recipe 'wordpress::nginx'
 include_recipe 'wordpress::php70'
 include_recipe 'wordpress::mariadb'
+include_recipe 'wordpress::wordpress'
